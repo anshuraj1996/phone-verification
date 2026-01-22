@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phone Verification API - Demo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert.info {
+            background: #cce7ff;
+            color: #004085;
+            border: 1px solid #b3d9ff;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .step-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e1e5e9;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 5px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .step-dot.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .step-dot.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-info h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .user-info p {
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .features {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .features li {
+            padding: 8px 0;
+            color: #28a745;
+        }
+
+        .features li:before {
+            content: "✓ ";
+            font-weight: bold;
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 Phone Verification</h1>
+            <p>Secure phone number verification with SMS</p>
+        </div>
+
+        <div class="content">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot1">1</div>
+                <div class="step-dot" id="dot2">2</div>
+                <div class="step-dot" id="dot3">3</div>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alert" class="alert"></div>
+
+            <!-- Step 1: Phone Number Input -->
+            <div id="step1" class="step active">
+                <h2>Enter Your Phone Number</h2>
+                <p style="margin-bottom: 20px; color: #666;">We'll send you a verification code via SMS</p>
+                
+                <form id="phoneForm">
+                    <div class="form-group">
+                        <label for="phoneNumber">Phone Number</label>
+                        <input type="tel" id="phoneNumber" placeholder="+1234567890" required>
+                    </div>
+                    <button type="submit" class="btn" id="sendCodeBtn">
+                        Send Verification Code
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 2: Verification Code Input -->
+            <div id="step2" class="step">
+                <h2>Enter Verification Code</h2>
+                <p style="margin-bottom: 20px; color: #666;">
+                    We sent a 6-digit code to <strong id="sentToNumber"></strong>
+                </p>
+                
+                <form id="verifyForm">
+                    <div class="form-group">
+                        <label for="verificationCode">Verification Code</label>
+                        <input type="text" id="verificationCode" placeholder="123456" maxlength="6" required>
+                    </div>
+                    <button type="submit" class="btn" id="verifyBtn">
+                        Verify Code
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="resendBtn">
+                        Resend Code
+                    </button>
+                </form>
+            </div>
+
+            <!-- Step 3: Success/Dashboard -->
+            <div id="step3" class="step">
+                <h2> Phone Verified Successfully!</h2>
+                
+                <div class="user-info" id="userInfo">
+                    <!-- User information will be populated here -->
+                </div>
+
+                <ul class="features">
+                    <li>Phone verification completed</li>
+                    <li>Secure API access enabled</li>
+                    <li>Full account features available</li>
+                </ul>
+
+                <button type="button" class="btn" onclick="resetDemo()">
+                    Try Again
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const API_BASE = '/api/auth';
+        
+        let currentPhone = '';
+        let authToken = '';
+
+        // DOM Elements
+        const phoneForm = document.getElementById('phoneForm');
+        const verifyForm = document.getElementById('verifyForm');
+        const phoneInput = document.getElementById('phoneNumber');
+        const codeInput = document.getElementById('verificationCode');
+        const sendCodeBtn = document.getElementById('sendCodeBtn');
+        const verifyBtn = document.getElementById('verifyBtn');
+        const resendBtn = document.getElementById('resendBtn');
+        const alert = document.getElementById('alert');
+        const sentToNumber = document.getElementById('sentToNumber');
+        const userInfo = document.getElementById('userInfo');
+
+        // Utility Functions
+        function showAlert(message, type = 'error') {
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        function hideAlert() {
+            alert.style.display = 'none';
+        }
+
+        function setLoading(button, isLoading) {
+            if (isLoading) {
+                button.disabled = true;
+                button.innerHTML = '<span class="loading"></span> Loading...';
+            } else {
+                button.disabled = false;
+                button.innerHTML = button.dataset.originalText || button.textContent;
+            }
+        }
+
+        function goToStep(stepNumber) {
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
+            });
+            
+            // Show target step
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            
+            // Update step indicators
+            document.querySelectorAll('.step-dot').forEach((dot, index) => {
+                dot.classList.remove('active', 'completed');
+                if (index + 1 < stepNumber) {
+                    dot.classList.add('completed');
+                } else if (index + 1 === stepNumber) {
+                    dot.classList.add('active');
+                }
+            });
+
+            hideAlert();
+        }
+
+        // API Functions
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const config = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+
+            if (authToken) {
+                config.headers.Authorization = `Bearer ${authToken}`;
+            }
+
+            if (body) {
+                config.body = JSON.stringify(body);
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, config);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || `HTTP error! status: ${response.status}`);
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        // Event Handlers
+        phoneForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phoneNumber = phoneInput.value.trim();
+            if (!phoneNumber) {
+                showAlert('Please enter a phone number');
+                return;
+            }
+
+            sendCodeBtn.dataset.originalText = sendCodeBtn.textContent;
+            setLoading(sendCodeBtn, true);
+
+            try {
+                const response = await apiCall('/verify-phone/request', 'POST', {
+                    phoneNumber: phoneNumber
+                });
+
+                currentPhone = phoneNumber;
+                sentToNumber.textContent = phoneNumber;
+                
+                showAlert(response.message, 'success');
+                
+                // Show verification code in development mode
+                if (response.data.mockMode && response.data.verificationCode) {
+                    showAlert(`Development Mode: Verification code is ${response.data.verificationCode}`, 'info');
+                }
+                
+                setTimeout(() => {
+                    goToStep(2);
+                }, 2000);
+
+            } catch (error) {
+                showAlert(error.message);
+            } finally {
+                setLoading(sendCodeBtn, false);
+            }
+        });
+
+        verifyForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const code = codeInput.value.trim();
+            if (!code || code.length !== 6) {
+                showAlert('Please enter a valid 6-digit verification code');
+                return;
+            }
+
+            verifyBtn.dataset.originalText = verifyBtn.textContent;
+            setLoading(verifyBtn, true);
+
+            try {
+                const response = await apiCall('/verify-phone/confirm', 'POST', {
+                    phoneNumber: currentPhone,
+                    verificationCode: code
+                });
+
+                authToken = response.data.token;
+                
+                // Display user information
+                const user = response.data.user;
+                userInfo.innerHTML = `
+                    <h3>Welcome!</h3>
+                    <p><strong>Phone:</strong> ${user.phoneNumber}</p>
+                    <p><strong>Status:</strong> ${user.isPhoneVerified ? 'Verified' : 'Not Verified'}</p>
+                    <p><strong>Verified At:</strong> ${new Date(user.verifiedAt).toLocaleString()}</p>
+                `;
+
+                showAlert(response.message, 'success');
+                
+                setTimeout(() => {
+                    goToStep(3);
+                }, 1500);
+
+            } catch (error) {
+                showAlert(error.message);
+            } finally {
+                setLoading(verifyBtn, false);
+            }
+        });
+
+        resendBtn.addEventListener('click', async () => {
+            resendBtn.dataset.originalText = resendBtn.textContent;
+            setLoading(resendBtn, true);
+
+            try {
+                const response = await apiCall('/verify-phone/request', 'POST', {
+                    phoneNumber: currentPhone
+                });
+
+                showAlert('Verification code resent successfully!', 'success');
+                
+                // Show verification code in development mode
+                if (response.data.mockMode && response.data.verificationCode) {
+                    showAlert(`Development Mode: Verification code is ${response.data.verificationCode}`, 'info');
+                }
+
+            } catch (error) {
+                showAlert(error.message);
+            } finally {
+                setLoading(resendBtn, false);
+            }
+        });
+
+        function resetDemo() {
+            currentPhone = '';
+            authToken = '';
+            phoneInput.value = '';
+            codeInput.value = '';
+            goToStep(1);
+        }
+
+        // Initialize
+        console.log(' Phone Verification Demo Loaded');
+        console.log(' API Base URL:', window.location.origin + API_BASE);
+    </script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "name": "phone-verification-api",
+  "version": "1.0.0",
+  "description": "A Node.js API for phone number verification using SMS with Twilio, JWT authentication, and MongoDB storage",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "NODE_ENV=production node src/server.js",
+    "dev": "NODE_ENV=development nodemon src/server.js",
+    "prod": "NODE_ENV=production node src/server.js",
+    "lambda": "NODE_ENV=production node src/lambda.js",
+    "deploy": "serverless deploy",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "echo \"Add ESLint configuration for linting\"",
+    "build": "echo \"No build process required for this project\""
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "phone-verification",
+    "sms",
+    "twilio",
+    "jwt",
+    "mongodb",
+    "authentication",
+    "otp",
+    "api",
+    "rest-api",
+    "aws-lambda",
+    "serverless"
+  ],
+  "author": "Anshumans Singh",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2",
+    "express-rate-limit": "^8.2.1",
+    "express-validator": "^7.3.1",
+    "helmet": "^6.1.5",
+    "joi": "^17.9.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^6.12.0",
+    "morgan": "^1.10.1",
+    "node-fetch": "^2.6.7",
+    "twilio": "^5.11.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
