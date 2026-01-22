@@ -1,7 +1,4 @@
-/**
- * AWS Lambda Handler for API Gateway
- * Serverless deployment wrapper for Express app
- */
+
 
 const serverlessExpress = require('@codegenie/serverless-express');
 const app = require('./server');

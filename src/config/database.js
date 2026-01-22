@@ -1,7 +1,3 @@
-/**
- * Database configuration and connection setup
- * Handles MongoDB connection using Mongoose
- */
 
 const mongoose = require('mongoose');
 

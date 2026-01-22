@@ -1,7 +1,3 @@
-/**
- * SMS Service using Twilio
- * Handles sending verification codes via SMS
- */
 
 const twilio = require('twilio');
 

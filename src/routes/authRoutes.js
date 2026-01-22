@@ -1,7 +1,3 @@
-/**
- * Authentication Routes
- * Defines all authentication-related API endpoints
- */
 
 const express = require('express');
 // const rateLimit = require('express-rate-limit');

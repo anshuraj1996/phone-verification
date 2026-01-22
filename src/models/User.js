@@ -1,7 +1,3 @@
-/**
- * User Model
- * Defines the user schema with phone verification functionality
- */
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');

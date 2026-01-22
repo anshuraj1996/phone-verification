@@ -1,7 +1,3 @@
-/**
- * Main Server Application
- * Express.js server with phone verification API
- */
 
 // Load environment variables first
 require('dotenv').config();

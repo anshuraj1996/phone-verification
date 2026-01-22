@@ -1,7 +1,3 @@
-/**
- * Authentication Controller
- * Handles user registration, login, and phone verification
- */
 
 const User = require('../models/User');
 const { generateToken } = require('../middleware/auth');

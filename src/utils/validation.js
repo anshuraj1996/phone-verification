@@ -1,7 +1,3 @@
-/**
- * Request Validation Utilities
- * Contains validation schemas and helper functions
- */
 
 const { body, param, query, validationResult } = require('express-validator');
 
